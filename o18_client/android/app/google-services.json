@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "299305724681",
+    "project_id": "o18-fire",
+    "storage_bucket": "o18-fire.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:299305724681:android:d0ed934279a6d7a18101d8",
+        "android_client_info": {
+          "package_name": "com.ak.o18_client"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "299305724681-n2dqvql103l7g0sfdgjvbootthqkb4au.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJO7kkprQKx0M1mulD1VNVhxl3dVbfFf4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "299305724681-n2dqvql103l7g0sfdgjvbootthqkb4au.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "299305724681-9se2ci3n1481uua2dtpvhge6k843r79k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.o18Staff"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:299305724681:android:ab3a9c7e9ae20b5c8101d8",
+        "android_client_info": {
+          "package_name": "com.ak.o18_client"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "299305724681-n2dqvql103l7g0sfdgjvbootthqkb4au.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJO7kkprQKx0M1mulD1VNVhxl3dVbfFf4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "299305724681-n2dqvql103l7g0sfdgjvbootthqkb4au.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "299305724681-9se2ci3n1481uua2dtpvhge6k843r79k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.o18Staff"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

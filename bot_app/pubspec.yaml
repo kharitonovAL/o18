@@ -1,0 +1,17 @@
+name: bot_app
+description: A sample command-line application.
+version: 1.0.0
+# homepage: https://www.example.com
+
+environment:
+  sdk: '>=2.14.4 <3.0.0'
+
+dependencies:
+  http: ^0.13.4
+  parse_server_sdk: ^3.1.0
+  path: ^1.8.0
+  teledart: ^0.2.1
+
+dev_dependencies:
+  lints: ^1.0.0
+  test: ^1.16.0

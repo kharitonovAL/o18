@@ -1,0 +1,74 @@
+name: o18_web
+description: A new Flutter project.
+
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+version: 1.1.11+13
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.18.0
+
+  # firebase
+  firebase_core: any
+  firebase_messaging: any
+
+  # server
+  parse_server_sdk_flutter: ^3.1.0
+
+  # architecture
+  flutter_bloc: ^8.0.1
+
+  # local packages
+  storage_repository:
+    path: packages/storage_repository
+  model_repository:
+    path: packages/model_repository
+  database_repository:
+    path: packages/database_repository
+  authentication_repository:
+    path: packages/authentication_repository
+
+  # keys and secrets
+  flutter_dotenv: ^5.0.2
+
+  # other
+  http: ^0.13.4
+  printing: ^5.6.0
+  table_calendar: ^3.0.2
+  pdf: ^3.8.2
+  excel: ^2.0.0-null-safety-3
+  path_provider: ^2.0.5
+  spreadsheet_decoder: ^2.0.0
+  validators: ^3.0.0
+  provider: ^6.0.1
+  cupertino_icons: ^1.0.2
+  image_picker: ^1.0.1
+  connectivity: ^3.0.6
+  formz: ^0.6.0
+  equatable: ^2.0.3
+  flow_builder: ^0.0.6
+  flutter_screenutil: ^5.5.3+2
+  dropdown_button2: ^2.1.4
+  flutter_masked_text2: ^0.9.1
+  dropdown_search: ^5.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/OpenSans-Regular.ttf
+        - asset: assets/fonts/OpenSans-Bold.ttf
+        - asset: assets/fonts/OpenSans-Italic.ttf
+        - asset: assets/fonts/OpenSans-BoldItalic.ttf

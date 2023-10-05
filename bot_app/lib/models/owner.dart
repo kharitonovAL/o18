@@ -1,0 +1,76 @@
+import 'package:parse_server_sdk/parse_server_sdk.dart';
+
+class Owner extends ParseObject implements ParseCloneable {
+  static const String _keyTableName = 'Owner';
+
+  Owner() : super(_keyTableName);
+  Owner.clone() : this();
+
+  @override
+  Owner clone(Map<String, dynamic> map) => Owner.clone()..fromJson(map);
+
+  static const String keyObjectId = 'objectId';
+  static const String keyAccountId = 'accountId';
+  static const String keyEmail = 'email';
+  static const String keyPhoneNumber = 'phoneNumber';
+  static const String keyName = 'name';
+  static const String keySquareMeters = 'squareMeters';
+  static const String keyPhoneNumberList = 'phoneNumberList';
+  static const String keyIsRegistered = 'isRegistered';
+  static const String keyDeviceTokenList = 'deviceTokenList';
+
+  @override
+  String? get objectId => get<String>(keyObjectId);
+
+  String? get accountId => get<String>(keyAccountId);
+  set accountId(String? accountId) => set<String>(
+        keyAccountId,
+        accountId ?? 'defaultValue',
+      );
+
+  String? get email => get<String>(keyEmail);
+  set email(String? email) => set<String>(
+        keyEmail,
+        email ?? 'defaultValue',
+      );
+
+  int? get phoneNumber => get<int>(keyPhoneNumber);
+  set phoneNumber(int? phoneNumber) => set<int>(
+        keyPhoneNumber,
+        phoneNumber ?? 89120000000,
+      );
+
+  List? get phoneNumberList => get<List>(keyPhoneNumberList);
+  set phoneNumberList(List? phoneNumberList) => set<List>(
+        keyPhoneNumberList,
+        phoneNumberList ?? <dynamic>[],
+      );
+
+  String? get name => get<String>(keyName);
+  set name(String? name) => set<String>(
+        keyName,
+        name ?? 'defaultValue',
+      );
+
+  double? get squareMeters {
+    final value = get<double>(keySquareMeters);
+    return double.parse('$value');
+  }
+
+  set squareMeters(double? squareMeters) => set<double>(
+        keySquareMeters,
+        squareMeters ?? 0,
+      );
+
+  bool? get isRegistered => get<bool>(keyIsRegistered);
+  set isRegistered(bool? isRegistered) => set<bool>(
+        keyIsRegistered,
+        isRegistered ?? false,
+      );
+
+  List? get deviceTokenList => get<List>(keyDeviceTokenList);
+  set deviceTokenList(List? deviceTokenList) => set<List>(
+        keyDeviceTokenList,
+        deviceTokenList ?? <dynamic>[],
+      );
+}
