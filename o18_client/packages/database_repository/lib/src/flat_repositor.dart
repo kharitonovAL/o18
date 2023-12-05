@@ -1,57 +1,73 @@
 import 'dart:developer';
 
-// ignore: implementation_imports, unused_import
-import 'package:model_repository/src/model/models.dart' as model;
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:model_repository/model_repository.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class FlatRepository {
-  final int queryLimit = 1000000;
+  FlatRepository();
 
-  Future<List<model.Flat>> getFlatList() async {
+  static const int queryLimit = 1000000;
+
+  Future<List<Flat>> getFlatList() async {
     log(
       'getFlatList() called',
       name: 'FlatRepository',
     );
-
-    final QueryBuilder query = QueryBuilder<model.Flat>(model.Flat());
+    final QueryBuilder query = QueryBuilder<Flat>(Flat());
     query.setLimit(queryLimit);
     final q = await query.query();
-    final list = q.results == null
-        ? <model.Flat>[]
-        : q.results!.map((dynamic flat) => flat as model.Flat).toList();
-    return list;
+
+    final qResults = q.results;
+
+    if (qResults != null) {
+      final list = qResults.map((dynamic flat) => flat as Flat).toList();
+      return list;
+    }
+    throw 'getFlatList throw';
   }
 
-  Future<List<model.Flat>> getFlatListForHouse({
+  Future<List<Flat>> getFlatListForHouse({
     required String houseId,
   }) async {
     log(
       'getFlatListForHouse() called',
       name: 'FlatRepository',
     );
-
-    final QueryBuilder query = QueryBuilder<model.Flat>(model.Flat());
+    final QueryBuilder query = QueryBuilder<Flat>(Flat());
     query
       ..setLimit(queryLimit)
-      ..whereEqualTo(model.Flat.keyHouseId, houseId);
+      ..whereEqualTo(Flat.keyHouseId, houseId);
 
     final q = await query.query();
-    final list = q.results == null
-        ? <model.Flat>[]
-        : q.results!.map((dynamic flat) => flat as model.Flat).toList();
-    return list;
+    final qResults = q.results;
+
+    if (qResults != null) {
+      final list = qResults.map((dynamic flat) => flat as Flat).toList();
+      return list;
+    }
+    throw 'getFlatListForHouse throw';
   }
 
-  Future<bool> isFlatExist({
-    required String houseId,
-    required String flatNumber,
+  Future<Flat?> getFlatByAccount({
+    required String accountId,
   }) async {
     log(
-      'isFlatExist() called',
+      'getFlatByAccount() called',
       name: 'FlatRepository',
     );
+    final flatList = await getFlatList();
+    Flat? _flat;
 
-    final flatList = await getFlatListForHouse(houseId: houseId);
-    return flatList.any((flat) => flat.flatNumber == flatNumber);
+    flatList.forEach((flat) {
+      final tempFlatAccountIdList = flat.accountIdList;
+
+      if (tempFlatAccountIdList != null) {
+        final flatAccountIdList = tempFlatAccountIdList.map((dynamic id) => id as String).toList();
+        if (flatAccountIdList.contains(accountId)) {
+          _flat = flat;
+        }
+      }
+    });
+    return _flat;
   }
 }

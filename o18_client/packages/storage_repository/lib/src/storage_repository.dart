@@ -8,7 +8,7 @@ class StorageRepository {
 
   static Future getInstance() async {
     log(
-      'getting StorageService instance',
+      'getting StorageRepository instance',
       name: 'StorageRepository',
     );
 

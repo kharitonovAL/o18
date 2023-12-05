@@ -20,12 +20,6 @@ class TabViewString {
   /// Сообщения
   static const messages = 'Сообщения';
 
-  /// Счетчики
-  static const counters = 'Счетчики';
-
-  /// Профиль
-  static const profile = 'Профиль';
-
   /// Да
   static const yes = 'Да';
 }

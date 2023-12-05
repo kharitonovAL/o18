@@ -1,103 +1,119 @@
-// ignore_for_file: implementation_imports
-
 import 'dart:developer';
 
-import 'package:database_repository/src/account_repository.dart';
-import 'package:database_repository/src/flat_repositor.dart';
-import 'package:database_repository/src/house_repository.dart';
-import 'package:model_repository/src/model/models.dart' as model;
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:database_repository/database_repository.dart';
+import 'package:model_repository/model_repository.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class OwnerRepository {
-  final int queryLimit = 1000000;
-  final houseRepository = HouseRepository();
-  final accountRepository = AccountRepository();
-  final flatRepository = FlatRepository();
+  OwnerRepository();
 
-  Future<List<model.Owner>> getOwnerList() async {
+  static const int queryLimit = 1000000;
+
+  Future<Owner> getOwnerByPhoneNumber({
+    required int phoneNumber,
+  }) async {
     log(
-      'getOwnerList() called',
+      'getOwnerByPhoneNumber() called',
       name: 'OwnerRepository',
     );
-    final QueryBuilder query = QueryBuilder<model.Owner>(model.Owner());
+    final QueryBuilder query = QueryBuilder<Owner>(Owner());
     query.setLimit(queryLimit);
     final q = await query.query();
+    final qResults = q.results;
 
-    if (q.results != null) {
-      final list = q.results!.map((dynamic owner) => owner as model.Owner).toList();
-      return list;
+    if (qResults != null) {
+      final list = qResults.map((dynamic owner) => owner as Owner).toList();
+
+      if (list.isEmpty) {
+        throw 'getOwnerByPhoneNumber list is empty throw';
+      }
+
+      final owner = list.firstWhere((owner) => owner.phoneNumber == phoneNumber);
+      return owner;
+    }
+    throw 'getOwnerByPhoneNumber throw';
+  }
+
+  Future<Owner?> getOwnerByEmail({
+    required String email,
+  }) async {
+    log(
+      'getOwnerByEmail() called',
+      name: 'OwnerRepository',
+    );
+    final QueryBuilder query = QueryBuilder<Owner>(Owner());
+    query.setLimit(queryLimit);
+    final q = await query.query();
+    final qResults = q.results;
+
+    if (qResults != null) {
+      final list = qResults.cast<Owner>();
+      final owner = list.firstWhere((owner) => owner.email == email);
+      return owner;
+    }
+    return null;
+  }
+
+  Future<List<Owner>> getOwnerListByAccountNumber({
+    required String accountNumber,
+    required AccountRepository accountRepository,
+  }) async {
+    log(
+      'getOwnerByAccountNumber() called',
+      name: 'OwnerRepository',
+    );
+    final QueryBuilder query = QueryBuilder<Owner>(Owner());
+    query.setLimit(queryLimit);
+    final q = await query.query();
+    final qResults = q.results;
+    final accountList = await accountRepository.getAccountList();
+
+    // This check needed to prevent wrong account number input on sign up page
+    final isAccountNumberExist = accountList.any((account) => account.accountNumber == accountNumber);
+    if (!isAccountNumberExist) {
+      return [];
+    }
+
+    final account = accountList.firstWhere((acc) => acc.accountNumber == accountNumber);
+
+    final ownerIdList = account.ownerIdList!.map((dynamic id) => id as String).toList();
+
+    if (qResults != null) {
+      final ownerList = qResults.map((dynamic owner) => owner as Owner).toList();
+      if (ownerList.isEmpty) {
+        throw 'getOwnerByAccountNumber list is empty throw';
+      }
+      final relatedOwnerList = <Owner>[];
+
+      ownerIdList.forEach((ownerId) {
+        final owner = ownerList.firstWhere((owner) => owner.objectId == ownerId);
+        relatedOwnerList.add(owner);
+      });
+
+      return relatedOwnerList;
     }
     return [];
   }
 
-  Future<List<model.Owner>> loadOwnerListForAccount({
-    required String accountNumber,
-  }) async {
-    log(
-      'getOwnerListForAccount() called',
-      name: 'OwnerRepository',
-    );
-
-    // get related account object [start]
-    final QueryBuilder accountQuery = QueryBuilder<model.Account>(model.Account());
-    accountQuery
-      ..setLimit(queryLimit)
-      ..whereEqualTo(model.Account.keyAccountNumber, accountNumber);
-    final aq = await accountQuery.query();
-
-    final accountList =
-        aq.results == null ? <model.Account>[] : aq.results!.map((dynamic acc) => acc as model.Account).toList();
-    final account = accountList.first;
-    // get related account object [end]
-
-    // get related owner objects [start]
-    final QueryBuilder ownerQuery = QueryBuilder<model.Owner>(model.Owner());
-    ownerQuery
-      ..setLimit(queryLimit)
-      ..whereEqualTo(model.Owner.keyAccountId, account.objectId);
-
-    final oq = await ownerQuery.query();
-    final ownerList =
-        oq.results == null ? <model.Owner>[] : oq.results!.map((dynamic owner) => owner as model.Owner).toList();
-    // get related owner objects [end]
-
-    return ownerList;
-  }
-
-  Future<model.Owner?> getOwnerById({
+  Future<bool> isOwnerRegistered({
     required String ownerId,
   }) async {
     log(
-      'getOwnerById() called',
+      'isOwnerRegistered() called',
       name: 'OwnerRepository',
     );
-    final response = await model.Owner().getObject(ownerId);
-    if (response.results != null) {
-      final owner = response.results!.first as model.Owner;
-      return owner;
+
+    final QueryBuilder query = QueryBuilder<Owner>(Owner());
+    query.setLimit(queryLimit);
+    final q = await query.query();
+    final qResults = q.results;
+
+    if (qResults != null) {
+      final ownerList = qResults.map((dynamic owner) => owner as Owner).toList();
+      final isOwnerRegistered = ownerList.any((owner) => owner.objectId == ownerId);
+      return isOwnerRegistered;
     }
 
-    return null;
-  }
-
-  Future<String> getOwnerAddress({
-    required model.Owner owner,
-  }) async {
-    log(
-      'getOwnerAddress() called',
-      name: 'OwnerRepository',
-    );
-
-    final accountList = await accountRepository.getAccountList();
-    final account = accountList.firstWhere((account) => account.objectId == owner.accountId);
-
-    final flatList = await flatRepository.getFlatList();
-    final flat = flatList.firstWhere((flat) => flat.objectId == account.flatId);
-
-    final houseList = await houseRepository.getHouseList();
-    final house = houseList.firstWhere((house) => house.objectId == flat.houseId);
-
-    final address = 'ул.${house.street}, д.${house.houseNumber}, кв.${flat.flatNumber}';
-    return address;
+    return false;
   }
 }

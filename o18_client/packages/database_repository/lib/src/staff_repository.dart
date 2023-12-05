@@ -3,26 +3,26 @@
 import 'dart:developer';
 
 // ignore: implementation_imports, unused_import
-import 'package:model_repository/src/model/models.dart' as model;
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:model_repository/src/model/models.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class StaffRepository {
   final int queryLimit = 1000000;
 
-  Future<List<model.Staff>> getStaffList() async {
+  Future<List<Staff>> getStaffList() async {
     log(
       'getPartnerStaff() called',
       name: 'PartnerRepository: getPartnerStaffList',
     );
 
-    final QueryBuilder query = QueryBuilder<model.Staff>(model.Staff());
+    final QueryBuilder query = QueryBuilder<Staff>(Staff());
     query.setLimit(queryLimit);
     final q = await query.query();
 
     if (q.results != null) {
       final list = q.results!
           .map(
-            (dynamic s) => s as model.Staff,
+            (dynamic s) => s as Staff,
           )
           .toList()
         ..sort((a, b) => a.name!.compareTo(b.name!));
@@ -41,10 +41,10 @@ class StaffRepository {
       name: 'PartnerRepository: getStaffPhoneNumber',
     );
 
-    final QueryBuilder query = QueryBuilder<model.Staff>(model.Staff());
+    final QueryBuilder query = QueryBuilder<Staff>(Staff());
     query.setLimit(queryLimit);
     final q = await query.query();
-    final list = q.results == null ? <model.Staff>[] : q.results!.map((dynamic staff) => staff as model.Staff).toList();
+    final list = q.results == null ? <Staff>[] : q.results!.map((dynamic staff) => staff as Staff).toList();
 
     var phoneNumber = '';
 

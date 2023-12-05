@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_equals_and_hash_code_on_mutable_classes
 
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class Account extends ParseObject implements ParseCloneable {
   static const String _keyTableName = 'Account';
@@ -28,7 +28,7 @@ class Account extends ParseObject implements ParseCloneable {
       );
 
   double get debt {
-    final value = get<double>(keyDebt);
+    final value = get<num>(keyDebt);
     return double.parse('$value');
   }
 
@@ -61,8 +61,7 @@ class Account extends ParseObject implements ParseCloneable {
   int get hashCode => objectId.hashCode;
 
   @override
-  bool operator ==(Object other) =>
-      other is Account && other.objectId == objectId;
+  bool operator ==(Object other) => other is Account && other.objectId == objectId;
 }
 
 /// Describes flat's account purpose.

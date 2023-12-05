@@ -1,15 +1,13 @@
-// ignore_for_file: avoid_equals_and_hash_code_on_mutable_classes
-
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class Owner extends ParseObject implements ParseCloneable {
   static const String _keyTableName = 'Owner';
 
-  @override
-  Owner clone(Map<String, dynamic> map) => Owner.clone()..fromJson(map);
-
   Owner() : super(_keyTableName);
   Owner.clone() : this();
+
+  @override
+  Owner clone(Map<String, dynamic> map) => Owner.clone()..fromJson(map);
 
   static const String keyObjectId = 'objectId';
   static const String keyAccountId = 'accountId';
@@ -17,6 +15,7 @@ class Owner extends ParseObject implements ParseCloneable {
   static const String keyPhoneNumber = 'phoneNumber';
   static const String keyName = 'name';
   static const String keySquareMeters = 'squareMeters';
+  static const String keyPhoneNumberList = 'phoneNumberList';
   static const String keyIsRegistered = 'isRegistered';
   static const String keyDeviceTokenList = 'deviceTokenList';
 
@@ -26,35 +25,41 @@ class Owner extends ParseObject implements ParseCloneable {
   String? get accountId => get<String>(keyAccountId);
   set accountId(String? accountId) => set<String>(
         keyAccountId,
-        accountId ?? '',
+        accountId ?? 'defaultValue',
       );
 
   String? get email => get<String>(keyEmail);
   set email(String? email) => set<String>(
         keyEmail,
-        email ?? '',
+        email ?? 'defaultValue',
       );
 
   int? get phoneNumber => get<int>(keyPhoneNumber);
   set phoneNumber(int? phoneNumber) => set<int>(
         keyPhoneNumber,
-        phoneNumber ?? 0,
+        phoneNumber ?? 89120000000,
+      );
+
+  List? get phoneNumberList => get<List>(keyPhoneNumberList);
+  set phoneNumberList(List? phoneNumberList) => set<List>(
+        keyPhoneNumberList,
+        phoneNumberList ?? <dynamic>[],
       );
 
   String? get name => get<String>(keyName);
   set name(String? name) => set<String>(
         keyName,
-        name ?? '',
+        name ?? 'defaultValue',
       );
 
-  double get squareMeters {
+  double? get squareMeters {
     final value = get<double>(keySquareMeters);
     return double.parse('$value');
   }
 
-  set squareMeters(double squareMeters) => set<double>(
+  set squareMeters(double? squareMeters) => set<double>(
         keySquareMeters,
-        squareMeters,
+        squareMeters ?? 0,
       );
 
   bool? get isRegistered => get<bool>(keyIsRegistered);
@@ -68,13 +73,4 @@ class Owner extends ParseObject implements ParseCloneable {
         keyDeviceTokenList,
         deviceTokenList ?? <dynamic>[],
       );
-
-  // This overrides needed to prevent DropdownButton from exception
-  // on two same item
-  @override
-  int get hashCode => objectId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      other is Owner && other.objectId == objectId;
 }

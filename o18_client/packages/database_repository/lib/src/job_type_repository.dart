@@ -2,7 +2,7 @@
 
 // // ignore: implementation_imports, unused_import
 // import 'package:model_repository/src/model/models.dart' as model;
-// import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+// import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 // class JobTypeRepository {
 //   final int queryLimit = 1000000;

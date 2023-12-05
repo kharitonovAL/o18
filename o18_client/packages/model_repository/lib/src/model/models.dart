@@ -18,4 +18,5 @@ export 'request_number.dart';
 export 'request_type.dart';
 export 'staff.dart';
 export 'staff_message.dart';
+export 'user_profile.dart';
 export 'user_request.dart';

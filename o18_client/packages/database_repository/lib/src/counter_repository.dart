@@ -1,115 +1,41 @@
-// ignore_for_file: implementation_imports, avoid_function_literals_in_foreach_calls
-
 import 'dart:developer';
 
-import 'package:database_repository/src/flat_repositor.dart';
-import 'package:model_repository/src/model/models.dart' as model;
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:auth_repository/auth_repository.dart';
+import 'package:database_repository/database_repository.dart';
+import 'package:model_repository/model_repository.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class CounterRepository {
-  final int queryLimit = 1000000;
-  final flatRepository = FlatRepository();
+  CounterRepository();
 
-  Future<List<model.Counter>> getCounterList() async {
-    log(
-      'getCounterList() called',
-      name: 'CounterRepository',
-    );
+  static const int queryLimit = 1000000;
 
-    final QueryBuilder query = QueryBuilder<model.Counter>(model.Counter());
-    query.setLimit(queryLimit);
-    final q = await query.query();
-    final list = q.results == null
-        ? <model.Counter>[]
-        : q.results!
-            .map((dynamic counter) => counter as model.Counter)
-            .toList();
-    return list;
-  }
-
-  Future<void> removeCounterWithSerialNumber({
-    required String serialNumber,
+  Future<List<Counter>?> counterList({
+    required AuthRepository authRepo,
+    required OwnerRepository ownerRepository,
+    required AccountRepository accountRepository,
+    required FlatRepository flatRepository,
   }) async {
     log(
-      'removeCounterWithSerialNumber() called',
+      '... getCounterList() called',
       name: 'CounterRepository',
     );
+    final user = await authRepo.currentUser();
+    final owner = await ownerRepository.getOwnerByEmail(email: user!.emailAddress!);
+    final account = await accountRepository.getAccountByOwner(owner: owner!);
+    final flat = await flatRepository.getFlatByAccount(accountId: account.objectId!);
 
-    final counterList = await getCounterList();
-    final flatList = await flatRepository.getFlatList();
+    final QueryBuilder query = QueryBuilder<Counter>(Counter());
+    query.setLimit(queryLimit);
+    final q = await query.query();
+    final qResults = q.results;
 
-    final counter = counterList
-        .firstWhere((counter) => counter.serialNumber == serialNumber);
-    await counter.delete();
+    if (qResults != null) {
+      final list = qResults.map((dynamic counter) => counter as Counter).toList();
+      list.retainWhere((counter) => counter.flatId == flat!.objectId);
+      return list;
+    }
 
-    flatList.forEach((flat) {
-      final counterIdList =
-          flat.accountIdList!.map((dynamic e) => e as String).toList();
-      if (counterIdList.contains(counter.objectId)) {
-        flat.setRemove(model.Flat.keyCounterIdList, counter.objectId);
-        flat.update();
-      }
-    });
+    return null;
   }
-
-  Future<List<model.Counter>> getRegisteredCounterList() async {
-    log(
-      'getRegisteredCounterList() called',
-      name: 'CounterRepository',
-    );
-
-    final flatList = await flatRepository.getFlatList();
-    final counterList = await getCounterList();
-
-    final counterIdList = <String>[];
-    final resultList = <model.Counter>[];
-
-    flatList.forEach((flat) {
-      final idList =
-          flat.counterIdList!.map((dynamic e) => e as String).toList();
-      if (idList.isNotEmpty) {
-        counterIdList.addAll(idList);
-      }
-    });
-
-    counterIdList.forEach((id) {
-      final counter = counterList.firstWhere((c) => c.objectId == id);
-      resultList.add(counter);
-    });
-
-    return resultList;
-  }
-
-  // user this method to set counter addresses
-
-  // Future setCounterAddress() async {
-  //   final houseRepo = HouseRepository();
-  //   final flatList = await flatRepository.getFlatList();
-  //   final houseList = await houseRepo.getHouseList();
-  //   final counterList = await getCounterList();
-
-  //   flatList.forEach((flat) {
-  //     if (flat.accountIdList!.isNotEmpty) {
-  //       log('flat.accountIdList.isNotEmpty, flatId: ${flat.objectId}');
-  //       final counterIdList =
-  //           flat.counterIdList!.map((dynamic e) => e as String).toList();
-
-  //       log(counterIdList.length.toString());
-
-  //       counterIdList.forEach((counterId) {
-  //         final counter =
-  //             counterList.firstWhere((c) => c.objectId == counterId);
-  //         log(counter.objectId!);
-
-  //         final house = houseList.firstWhere((h) => h.objectId == flat.houseId);
-  //         final address = 'ул.${house.street} кв.${flat.flatNumber}';
-  //         log(address);
-  //         counter.address = address;
-  //         counter.update().then((value) => log('${value.success}'));
-  //       });
-  //     } else {
-  //       log('empty list');
-  //     }
-  //   });
-  // }
 }

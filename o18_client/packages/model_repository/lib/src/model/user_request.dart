@@ -1,14 +1,16 @@
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class UserRequest extends ParseObject implements ParseCloneable {
   static const String _keyTableName = 'UserRequest';
 
-  @override
-  UserRequest clone(Map<String, dynamic> map) =>
-      UserRequest.clone()..fromJson(map);
-
   UserRequest() : super(_keyTableName);
   UserRequest.clone() : this();
+
+  @override
+  UserRequest clone(
+    Map<String, dynamic> map,
+  ) =>
+      UserRequest.clone()..fromJson(map);
 
   static const String keyAccountNumber = 'accountNumber';
   static const String keyUserRequest = 'userRequest';

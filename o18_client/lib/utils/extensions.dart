@@ -41,16 +41,16 @@ extension StatusIcon on UserRequest {
     if (status == RS.received) {
       return Container(
         alignment: Alignment.center,
-        height: 32.h,
-        width: 32.w,
+        height: 32,
+        width: 32,
         decoration: BoxDecoration(
           color: AppColors.grey_1,
-          borderRadius: BorderRadius.circular(8.r),
+          borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(
+        child: const Icon(
           Icons.inbox_outlined,
           color: AppColors.grey_2,
-          size: 20.w,
+          size: 20,
         ),
       );
     }
@@ -58,16 +58,16 @@ extension StatusIcon on UserRequest {
     if (status == RS.passedToTheChiefEngineer || status == RS.passedToTheMaster || status == RS.inProgress) {
       return Container(
         alignment: Alignment.center,
-        height: 32.h,
-        width: 32.w,
+        height: 32,
+        width: 32,
         decoration: BoxDecoration(
           color: AppColors.yellow_0,
-          borderRadius: BorderRadius.circular(8.r),
+          borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(
+        child: const Icon(
           Icons.assignment_outlined,
           color: AppColors.yellow_1,
-          size: 20.w,
+          size: 20,
         ),
       );
     }
@@ -76,16 +76,16 @@ extension StatusIcon on UserRequest {
       if (requestType == RequestType.failure) {
         return Container(
           alignment: Alignment.center,
-          height: 32.h,
-          width: 32.w,
+          height: 32,
+          width: 32,
           decoration: BoxDecoration(
             color: AppColors.pink,
-            borderRadius: BorderRadius.circular(8.r),
+            borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.check_circle_outline_outlined,
             color: AppColors.green_0,
-            size: 20.w,
+            size: 20,
           ),
         );
       }
@@ -93,32 +93,32 @@ extension StatusIcon on UserRequest {
       if (requestType == RequestType.paid) {
         return Container(
           alignment: Alignment.center,
-          height: 32.h,
-          width: 32.w,
+          height: 32,
+          width: 32,
           decoration: BoxDecoration(
             color: AppColors.pink,
-            borderRadius: BorderRadius.circular(8.r),
+            borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.check_circle_outline_outlined,
             color: AppColors.green_0,
-            size: 20.w,
+            size: 20,
           ),
         );
       }
 
       return Container(
         alignment: Alignment.center,
-        height: 32.h,
-        width: 32.w,
+        height: 32,
+        width: 32,
         decoration: BoxDecoration(
           color: AppColors.transparent,
-          borderRadius: BorderRadius.circular(8.r),
+          borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(
+        child: const Icon(
           Icons.check_circle_outline_outlined,
           color: AppColors.green_0,
-          size: 20.w,
+          size: 20,
         ),
       );
     }
@@ -127,16 +127,16 @@ extension StatusIcon on UserRequest {
       if (requestType == RequestType.failure) {
         return Container(
           alignment: Alignment.center,
-          height: 32.h,
-          width: 32.w,
+          height: 32,
+          width: 32,
           decoration: BoxDecoration(
             color: AppColors.pink,
-            borderRadius: BorderRadius.circular(8.r),
+            borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.cancel_outlined,
             color: AppColors.blueIcon,
-            size: 20.w,
+            size: 20,
           ),
         );
       }
@@ -144,32 +144,32 @@ extension StatusIcon on UserRequest {
       if (requestType == RequestType.paid) {
         return Container(
           alignment: Alignment.center,
-          height: 32.h,
-          width: 32.w,
+          height: 32,
+          width: 32,
           decoration: BoxDecoration(
             color: AppColors.green_1,
-            borderRadius: BorderRadius.circular(8.r),
+            borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.cancel_outlined,
             color: AppColors.blueIcon,
-            size: 20.w,
+            size: 20,
           ),
         );
       }
 
       return Container(
         alignment: Alignment.center,
-        height: 32.h,
-        width: 32.w,
+        height: 32,
+        width: 32,
         decoration: BoxDecoration(
           color: AppColors.transparent,
-          borderRadius: BorderRadius.circular(8.r),
+          borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(
+        child: const Icon(
           Icons.cancel_outlined,
           color: AppColors.blueIcon,
-          size: 20.w,
+          size: 20,
         ),
       );
     }

@@ -1,223 +1,160 @@
 // ignore_for_file: implementation_imports
 
-import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
-import 'package:model_repository/src/model/models.dart' as model;
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:auth_repository/auth_repository.dart';
+import 'package:database_repository/database_repository.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:model_repository/model_repository.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:storage_repository/storage_repository.dart';
 
 class MessagesRepository {
-  final int queryLimit = 1000000;
+  static const int queryLimit = 1000000;
 
-  Future<List<model.ParseMessage>> getMessageList({
-    required String houseId,
+  Future<List<ParseMessage>> getMessageListForOwner({
+    required String ownerId,
   }) async {
     log(
-      'getMessageList() called',
+      'getMessagesForOwner() called',
       name: 'MessagesRepository',
     );
-
-    final QueryBuilder query = QueryBuilder<model.ParseMessage>(model.ParseMessage());
+    final QueryBuilder query = QueryBuilder<ParseMessage>(ParseMessage());
     query.setLimit(queryLimit);
     final q = await query.query();
-    final list = q.results == null
-        ? <model.ParseMessage>[]
-        : q.results!.map((dynamic msg) => msg as model.ParseMessage).toList();
-    list.retainWhere((msg) => msg.houseId == houseId);
-    list.sort((a, b) => a.date!.compareTo(b.date!));
-    return list;
+    final qResults = q.results;
+
+    if (qResults != null) {
+      final list = qResults.map((dynamic msg) => msg as ParseMessage).toList();
+
+      list.retainWhere((msg) => msg.ownerId == ownerId);
+      list.sort((a, b) {
+        final aDate = a.date;
+        final bDate = b.date;
+
+        if (aDate != null && bDate != null) {
+          return aDate.compareTo(bDate);
+        }
+        throw 'getMessageListForOwner sort list throw';
+      });
+
+      return list;
+    }
+
+    return [];
   }
 
-  /// Get messages that was sent to specific house and those messages will be shown
-  /// in info card of the house
-  Future<List<model.HouseMessage>> getMessageListForHouse({
+  Future<List<ParseMessage>> getMessageListForHouse({
     required String houseId,
   }) async {
     log(
       'getMessageListForHouse() called',
       name: 'MessagesRepository',
     );
-
-    final QueryBuilder query = QueryBuilder<model.HouseMessage>(model.HouseMessage());
+    final QueryBuilder query = QueryBuilder<ParseMessage>(ParseMessage());
     query.setLimit(queryLimit);
     final q = await query.query();
-    final list = q.results == null
-        ? <model.HouseMessage>[]
-        : q.results!.map((dynamic msg) => msg as model.HouseMessage).toList();
-    list.retainWhere((msg) => msg.houseId == houseId);
-    list.sort((a, b) => a.date!.compareTo(b.date!));
-    return list;
-  }
+    final qResults = q.results;
 
-  Future<List<model.StaffMessage>> getStaffMessageList({
-    required String staffId,
-  }) async {
-    log(
-      'getStaffMessageList() called',
-      name: 'MessagesRepository',
-    );
+    if (qResults != null) {
+      final list = qResults.map((dynamic msg) => msg as ParseMessage).toList();
+      list.retainWhere((msg) => msg.houseId == houseId);
+      list.sort((a, b) {
+        final aDate = a.date;
+        final bDate = b.date;
 
-    final QueryBuilder query = QueryBuilder<model.StaffMessage>(model.StaffMessage());
-    query.setLimit(queryLimit);
-    final q = await query.query();
-    final list = q.results == null
-        ? <model.StaffMessage>[]
-        : q.results!.map((dynamic msg) => msg as model.StaffMessage).toList();
-    list.retainWhere((msg) => msg.staffId == staffId);
-    list.sort((a, b) => a.date!.compareTo(b.date!));
-    return list;
-  }
+        if (aDate != null && bDate != null) {
+          return aDate.compareTo(bDate);
+        }
+        throw 'getMessageListForHouse sort list throw';
+      });
 
-  Future<List<model.ParseMessage>> getOwnerMessageList({
-    required String ownerId,
-  }) async {
-    log(
-      'getOwnerMessageList() called',
-      name: 'MessagesRepository',
-    );
+      return list;
+    }
 
-    final QueryBuilder query = QueryBuilder<model.ParseMessage>(model.ParseMessage());
-    query.setLimit(queryLimit);
-    final q = await query.query();
-    final list = q.results == null
-        ? <model.ParseMessage>[]
-        : q.results!.map((dynamic msg) => msg as model.ParseMessage).toList();
-    list.retainWhere((msg) => msg.ownerId == ownerId);
-    list.sort((a, b) => a.date!.compareTo(b.date!));
-    return list;
+    return [];
   }
 
   Future<void> updateMessageWasSeenDate({
-    required model.StaffMessage message,
+    required ParseMessage message,
   }) async {
     log(
       'updateMessageWasSeenDate() called',
       name: 'MessagesRepository',
     );
 
-    message.wasSeenDate = DateTime.now();
-    message.wasSeen = true;
-    await message.update();
+    if (message.wasSeenDate == null || (message.wasSeen != null && !message.wasSeen!)) {
+      log(
+        'message not seen yet',
+        name: 'MessagesRepository',
+      );
+
+      message.wasSeenDate = DateTime.now().toLocal();
+      message.wasSeen = true;
+      await message.update().then(
+            (value) => log(
+              'message was ${value.success ? '' : 'NOT'} updated',
+              name: 'MessagesRepository',
+            ),
+          );
+    } else {
+      log(
+        'message was seen on ${message.wasSeenDate}',
+        name: 'MessagesRepository',
+      );
+    }
   }
 
-  Future<bool> sendPushToTopic({
-    required String body,
-    required String houseId,
-  }) async {
-    await dotenv.load();
-
-    final topic = houseId;
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'key=${dotenv.env['FCM_SERVER_KEY']}',
-    };
-    final message = {
-      'notification': {
-        'title': 'Сообщение от УК',
-        'body': body,
-        'badge': 1,
-        'sound': 'default',
-      },
-      'priority': 'high',
-      'to': '/topics/$topic',
-      'data': {'topic': topic}
-    };
-
-    final jsonBody = json.encode(message);
-    final postResponse = await http.post(
-      Uri.parse(dotenv.env['FCM_URL']!),
-      headers: headers,
-      body: jsonBody,
-      encoding: Encoding.getByName('utf-8'),
+  Future<bool> unsubscribeFromTopic(
+    String keyTopic,
+    FirebaseMessaging firebaseMessagingInstance,
+  ) async {
+    log(
+      'unsubscribeFromTopic() called',
+      name: 'MessagesRepository',
     );
-
-    var postResponseSuccess = false;
-
-    // check if message was sent
-    if (postResponse.statusCode == 200 || postResponse.statusCode == 201 || postResponse.statusCode == 202) {
-      postResponseSuccess = true;
+    final topic = StorageRepository.getString(keyTopic);
+    if (topic.isNotEmpty) {
+      await firebaseMessagingInstance.unsubscribeFromTopic(topic);
     }
 
-    final houseMessage = model.HouseMessage();
-    houseMessage
-      ..title = 'Сообщение от УК'
-      ..body = body
-      ..date = DateTime.now()
-      ..houseId = houseId;
-    final houseMessageSaveResponse = await houseMessage.save();
-
-    // final parseMessage = model.ParseMessage();
-    // parseMessage
-    //   ..title = 'Сообщение от УК'
-    //   ..body = body
-    //   ..date = DateTime.now()
-    //   ..houseId = houseId
-    //   ..wasSeen = false;
-    // final parseMessageSaveResponse = await parseMessage.save();
-
-    if (postResponseSuccess && houseMessageSaveResponse.success
-        // && parseMessageSaveResponse.success
-        ) {
-      return true;
-    }
-    return false;
+    return true;
   }
 
-  Future<bool> sendPushToToken({
-    required String title,
-    required String message,
-    required String token,
-    String? houseId,
-    String? ownerId,
+  Future<bool?> deleteDeviceToken({
+    required AuthRepository authRepository,
+    required OwnerRepository ownerRepository,
+    required String keyToken,
   }) async {
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'key=${dotenv.env['FCM_SERVER_KEY']}',
-    };
-    final body = {
-      'notification': {
-        'title': title,
-        'body': message,
-        'badge': 1,
-        'sound': 'default',
-      },
-      'priority': 'high',
-      'to': token
-    };
-
-    final jsonBody = json.encode(body);
-
-    final postResponse = await http.post(
-      Uri.parse(dotenv.env['FCM_URL']!),
-      headers: headers,
-      body: jsonBody,
-      encoding: Encoding.getByName('utf-8'),
+    log(
+      'deleteDeviceToken() called',
+      name: 'MessagesRepository',
     );
+    final token = StorageRepository.getString(keyToken);
 
-    var postResponseSuccess = false;
+    final user = await authRepository.currentUser();
 
-    // check if message was sent
-    if (postResponse.statusCode == 200 || postResponse.statusCode == 201 || postResponse.statusCode == 202) {
-      postResponseSuccess = true;
+    if (user != null) {
+      final owner = await ownerRepository.getOwnerByEmail(
+        email: user.emailAddress!,
+      );
+
+      // fo some reason `deviceTokenList` has to be inialized here,
+      // not before line: `if (deviceTokenList.length == 1) _owner!.isRegistered = false;`
+      final deviceTokenList = owner!.deviceTokenList!.map((dynamic e) => '$e').toList();
+      owner.setRemove(Owner.keyDeviceTokenList, token);
+
+      // if there is only one user device (length == 1), set `isRegistered` to false, becase user is no longer able to
+      // recieve push notifications
+
+      if (deviceTokenList.length == 1) {
+        owner.isRegistered = false;
+      }
+      final result = await owner.update();
+
+      return result.success;
     }
 
-    final parseMessage = model.ParseMessage();
-    parseMessage
-      ..title = title
-      ..body = message
-      ..date = DateTime.now()
-      ..houseId = houseId
-      ..ownerId = ownerId
-      ..token = token
-      ..wasSeen = false;
-
-    final parseMessageSaveResponse = await parseMessage.save();
-
-    if (postResponseSuccess && parseMessageSaveResponse.success) {
-      return true;
-    }
-    return false;
+    return null;
   }
 }

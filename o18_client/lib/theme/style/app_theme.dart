@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:o18_client/theme/theme.dart';
 
 class AppTheme {
   static final light = ThemeData(
+    useMaterial3: true,
     dialogTheme: DialogTheme(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(26.r),
+        borderRadius: BorderRadius.circular(26),
       ),
     ),
     appBarTheme: const AppBarTheme(color: AppColors.white),
@@ -19,28 +19,29 @@ class AppTheme {
       selectionColor: AppColors.green_0,
       selectionHandleColor: AppColors.green_0,
     ),
-    inputDecorationTheme: InputDecorationTheme(
-      errorStyle: const TextStyle(color: AppColors.red),
+    inputDecorationTheme: const InputDecorationTheme(
+      errorStyle: TextStyle(color: AppColors.red),
       floatingLabelBehavior: FloatingLabelBehavior.never,
       contentPadding: EdgeInsets.symmetric(
-        horizontal: 20.w,
-        vertical: 20.h,
+        horizontal: 20,
+        vertical: 20,
       ),
       fillColor: AppColors.grey_3,
       filled: true,
       border: OutlineInputBorder(
         borderSide: BorderSide.none,
         borderRadius: BorderRadius.all(
-          Radius.circular(12.r),
+          Radius.circular(12),
         ),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        foregroundColor: AppColors.green_0,
+        backgroundColor: AppColors.green_0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
         ),
+        foregroundColor: Colors.white
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
@@ -48,7 +49,7 @@ class AppTheme {
         foregroundColor: AppColors.grey_2,
         textStyle: AppFonts.searchBar,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
     ),

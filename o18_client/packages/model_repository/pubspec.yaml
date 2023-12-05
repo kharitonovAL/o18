@@ -3,8 +3,8 @@ description: Dart package which manages the authentication domain.
 publish_to: none
 
 environment:
-  sdk: ">=2.16.0-0 <3.0.0"
+  sdk: ">=3.2.0 <4.0.0"
 
 dependencies:
-  parse_server_sdk_flutter: ^3.1.0
+  parse_server_sdk_flutter: ^7.0.0
   equatable: ^2.0.5
