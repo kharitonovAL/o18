@@ -21,7 +21,7 @@ This readme presented in Russian 🇷🇺 and [English](#en)🇺🇸 version.
 
 ## Контакты
 Если вам интересно поучаствовать в проекте, или внедрить его, или поддержать проект, то можете связаться с нами через:
-- [Telegram](https://t.me/kharitonov_al)
+- [Telegram](https://t.me/hrtval)
 - [Email](mailto:ceo@operator18.ru)
 
 # О проекте
@@ -145,7 +145,7 @@ The entire UI is designed in Figma and is available via this [link](https://www.
 
 ## Contacts
 If you are interested in participating in the project, implementing it, or supporting it, you can contact us through:
-- [Telegram](https://t.me/kharitonov_al)
+- [Telegram](https://t.me/hrtval)
 - [Email](mailto:ceo@operator18.ru)
 
 # About the Project
